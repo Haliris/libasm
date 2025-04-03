@@ -3,6 +3,7 @@ extern size_t ft_strlen(const char* str);
 extern char*  ft_strcpy(char* dest, const char* src);
 extern int    ft_strcmp(const char* s1, const char* s2);
 extern int    ft_write(int fildes, const void* buff, size_t nbytes);
+extern int    ft_read(int fildes, const void* buff, size_t nbytes);
 
 
 void run_strcpy_test(const char *test_name, const char *src) {
@@ -47,6 +48,71 @@ void run_write_test(const char *test_str, int expected_bytes, size_t length) {
     }
 }
 
+void test_read_success() {
+    printf("=== Testing successful read ===\n");
+    int fd = open("testfile.txt", O_RDONLY);
+    if (fd == -1) {
+        perror("Failed to open test file");
+        return;
+    }
+    
+    char buf1[100] = {0};
+    char buf2[100] = {0};
+    
+    ssize_t sys_ret = read(fd, buf1, 10);
+    lseek(fd, 0, SEEK_SET);
+    ssize_t ft_ret = ft_read(fd, buf2, 10);
+    
+    printf("System read returned: %zd\n", sys_ret);
+    printf("ft_read returned: %zd\n", ft_ret);
+    printf("Buffers match: %d\n", memcmp(buf1, buf2, 10) == 0);
+    
+    close(fd);
+}
+
+void test_read_empty() {
+    printf("=== Testing read from empty file ===\n");
+    system("touch empty.txt");
+    int fd = open("empty.txt", O_RDONLY);
+    
+    char buf[10];
+    ssize_t ret = ft_read(fd, buf, 10);
+    
+    printf("Return value (should be 0): %zd\n", ret);
+    
+    close(fd);
+}
+
+void test_read_error() {
+    printf("=== Testing error case (bad file descriptor) ===\n");
+    char buf[10];
+    ssize_t ret = ft_read(-1, buf, 10);
+    
+    printf("Return value (should be -1): %zd\n", ret);
+    printf("errno set: %d (%s)\n", errno, strerror(errno));
+}
+
+void test_read_stdin() {
+    printf("=== Testing read from stdin ===\n");
+    printf("Type something (up to 10 chars) and press enter: ");
+    
+    char buf[11] = {0};
+    ssize_t ret = ft_read(STDIN_FILENO, buf, 10);
+    
+    printf("\nYou entered (%zd bytes): %s\n", ret, buf);
+}
+
+void test_read_zero_bytes() {
+    printf("=== Testing read of zero bytes ===\n");
+    int fd = open("testfile.txt", O_RDONLY);
+    
+    char buf[10];
+    ssize_t ret = ft_read(fd, buf, 0);
+    
+    printf("Return value (should be 0): %zd\n", ret);
+    
+    close(fd);
+}
 
 int main(void) {
 
@@ -103,5 +169,19 @@ int main(void) {
     printf("Error value returned: %d\n", error);
     ft_write(1, "Writing with bad size.\n", 23); // Write to stderr using ft_write directly
     run_write_test("This is not the right size\n", -1, -1);
-    // Test Case 5: Invalid file descriptor (simulate an error)
+
+    printf("\n----/ft_read tests/----\n");
+
+    FILE *f = fopen("testfile.txt", "w");
+    if (f) {
+        fprintf(f, "This is a test file for ft_read testing.\n");
+        fclose(f);
+    }
+    test_read_success();
+    test_read_empty();
+    test_read_error();
+    test_read_stdin();
+    test_read_zero_bytes();
+    remove("empty.txt");
+    
 }
