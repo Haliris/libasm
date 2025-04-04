@@ -8,28 +8,40 @@ RANLIB = ranlib
 ASM_FLAGS = -f elf64
 NAME = libasm.a
 
-SRC = 	src/ft_strlen.s \
-		src/ft_strcpy.s \
-		src/ft_strcmp.s \
-		src/ft_write.s \
-		src/ft_read.s \
-		src/ft_strdup.s
+ASM_SRC = 	src/ft_strlen.s \
+			src/ft_strcpy.s \
+			src/ft_strcmp.s \
+			src/ft_write.s \
+			src/ft_read.s \
+			src/ft_strdup.s
 
-OBJ = $(SRC:.s=.o)
+ASM_OBJ = $(ASM_SRC:.s=.o)
 
-all: $(NAME)
+CC = gcc
+C_FLAGS = -Wall -Wextra -Werror
+TEST_SRC = src/main.c
+TEST_INCLUDE = -I src/
+TEST_NAME = unit_tests
 
-$(NAME): $(OBJ)
+all: $(NAME) $(test_name)
+
+$(NAME): $(ASM_OBJ)
 	$(AR) rcs $@ $^
 	$(RANLIB) $@
 
 %.o: %.s
 	$(ASM) $(ASM_FLAGS) -o $@ $<
 
+unit_tests:
+	$(CC) $(C_FLAGS) $(TEST_SRC) $(NAME) $(TEST_INCLUDE) -o $(TEST_NAME)
+
 clean:
-	rm -rf $(OBJ) $(NAME)
+	rm -rf $(ASM_OBJ) $(NAME)
 
 fclean: clean
 	rm -rf $(NAME)
+	rm -rf $(TEST_NAME)
 
-.PHONY: all clean fclean
+re: fclean all
+
+.PHONY: all clean fclean re

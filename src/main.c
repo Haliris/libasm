@@ -1,9 +1,10 @@
 #include "libasm.h"
 extern size_t ft_strlen(const char* str);
-extern char*  ft_strcpy(char* dest, const char* src);
+extern char   *ft_strcpy(char* dest, const char* src);
 extern int    ft_strcmp(const char* s1, const char* s2);
 extern int    ft_write(int fildes, const void* buff, size_t nbytes);
 extern int    ft_read(int fildes, const void* buff, size_t nbytes);
+extern char   *ft_strdup(const char* s);
 
 
 void run_strcpy_test(const char *test_name, const char *src) {
@@ -114,6 +115,26 @@ void test_read_zero_bytes() {
     close(fd);
 }
 
+void test_strdup(const char *input) {
+    char *result = ft_strdup(input);
+    char *expected = strdup(input);
+
+    if (!result) {
+        printf("FAIL: strdup returned NULL for input: \"%s\"\n", input);
+        free(expected);
+        return;
+    }
+
+    if (strcmp(result, expected) != 0) {
+        printf("FAIL: Expected \"%s\", got \"%s\"\n", expected, result);
+    } else {
+        printf("PASS: \"%s\" duplicated successfully.\n", input);
+    }
+
+    free(result);
+    free(expected);
+}
+
 int main(void) {
 
     printf("----/ft_strlen tests/----\n");
@@ -183,5 +204,14 @@ int main(void) {
     test_read_stdin();
     test_read_zero_bytes();
     remove("empty.txt");
+    printf("\n=== Starting ft_strdup Tests ===\n\n");
+    test_strdup("");                     // empty string
+    test_strdup("hello");               // normal case
+    test_strdup("1234567890");          // numeric characters
+    test_strdup("!@#$%^&*()");          // special characters
+    test_strdup("The quick brown fox"); // sentence
+    test_strdup("A");                   // single character
+    test_strdup("Long string.................................................."); // 
     
+    return 0;
 }
