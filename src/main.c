@@ -183,8 +183,10 @@ int main(void) {
     ft_write(1, "Writing to invalid fd.\n", 23);
     int error = ft_write(-1, "error", 5);
     printf("Error value returned: %d\n", error);
+    printf("Errno value: %d (%s)\n", errno, strerror(errno));
     ft_write(1, "Writing with bad size.\n", 23);
     run_write_test("This is not the right size\n", -1, -1);
+    printf("Errno value: %d (%s)\n", errno, strerror(errno));
 
     printf("\n----/ft_read tests/----\n");
     FILE *f = fopen("testfile.txt", "w");
