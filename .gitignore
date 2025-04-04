@@ -3,3 +3,6 @@
 *.o
 *.obj
 *.bc
+unit_tests
+*.a
+test
