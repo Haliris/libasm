@@ -203,6 +203,7 @@ int main(void) {
     test_read_error();
     test_read_stdin();
     test_read_zero_bytes();
+    remove("testfile.txt");
     remove("empty.txt");
     printf("\n=== Starting ft_strdup Tests ===\n\n");
     test_strdup("");                     // empty string
