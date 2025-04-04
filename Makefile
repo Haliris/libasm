@@ -23,7 +23,7 @@ TEST_SRC = src/main.c
 TEST_INCLUDE = -I src/
 TEST_NAME = unit_tests
 
-all: $(NAME) $(test_name)
+all: $(NAME) $(test_name) unit_tests
 
 $(NAME): $(ASM_OBJ)
 	$(AR) rcs $@ $^
