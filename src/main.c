@@ -8,7 +8,9 @@ extern char   *ft_strdup(const char* s);
 
 
 void run_strcpy_test(const char *test_name, const char *src) {
-    char dest[100]; 
+    char dest[1000]; 
+
+    memset(dest, 0, 1000);
 
     char *result = ft_strcpy(dest, src);
 
@@ -20,13 +22,11 @@ void run_strcmp_test(const char *s1, const char *s2) {
     int result_asm = ft_strcmp(s1, s2);
     int result_c = strcmp(s1, s2);
 
-    // Normalize results (strcmp returns negative, zero, or positive values)
     if (result_asm < 0) result_asm = -1;
     if (result_asm > 0) result_asm = 1;
     if (result_c < 0) result_c = -1;
     if (result_c > 0) result_c = 1;
 
-    // Print results
     printf("Comparing \"%s\" vs \"%s\":\n", s1, s2);
     printf("  ft_strcmp: %d\n", result_asm);
     printf("  strcmp:    %d\n", result_c);
@@ -41,7 +41,7 @@ void run_strcmp_test(const char *s1, const char *s2) {
 }
 
 void run_write_test(const char *test_str, int expected_bytes, size_t length) {
-    int bytes_written = ft_write(1, test_str, length);  // Write to stdout
+    int bytes_written = ft_write(1, test_str, length);
     if (bytes_written != expected_bytes) {
         printf("Test failed: expected %d bytes, got %d bytes.\n", expected_bytes, bytes_written);
     } else {
@@ -130,7 +130,6 @@ void test_strdup(const char *input) {
     } else {
         printf("PASS: \"%s\" duplicated successfully.\n", input);
     }
-
     free(result);
     free(expected);
 }
@@ -164,35 +163,30 @@ int main(void) {
 
     printf("\n----/ft_strcmp tests/----\n");
     run_strcmp_test("hello", "hello");
-    run_strcmp_test("abc", "abd");         // Should return -1
-    run_strcmp_test("zebra", "apple");     // Should return 1
-    run_strcmp_test("", "");               // Both empty, should return 0
-    run_strcmp_test("abc", "");            // Second string empty, should return 1
-    run_strcmp_test("", "abc");            // First string empty, should return -1
-    run_strcmp_test("abcd", "abc");        // First is longer, should return 1
-    run_strcmp_test("abc", "abcd");        // Second is longer, should return -1
-    run_strcmp_test("abc\0def", "abc");    // Should stop at '\0', return 0
-    run_strcmp_test("hello", "hellO");     // Case-sensitive, should return 1
-    run_strcmp_test("123", "124");         // Should return -1
+    run_strcmp_test("abc", "abd");
+    run_strcmp_test("zebra", "apple");
+    run_strcmp_test("", "");
+    run_strcmp_test("abc", "");
+    run_strcmp_test("", "abc");
+    run_strcmp_test("abcd", "abc");
+    run_strcmp_test("abc", "abcd");
+    run_strcmp_test("abc\0def", "abc");
+    run_strcmp_test("hello", "hellO");
+    run_strcmp_test("123", "124");
 
     printf("\n----/ft_write tests/----\n");
-    // Test Case 1: Write a simple string to stdout
-    run_write_test("Hello, world!\n", 14, strlen("Hello, world!\n"));  // "Hello, world!" + newline
-    // Test Case 2: Write an empty string to stdout
-    run_write_test("", 0, 0);  // No output, should write 0 bytes
-    // Test Case 3: Write a longer string
-    run_write_test("This is a longer test string.\n", 30, strlen("This is a longer test string.\n"));  // 30 characters
-    // Test Case 4: Test with a custom file descriptor (e.g., stderr)
-    run_write_test("Error message to stderr.\n", 25, strlen("Error message to stderr.\n"));  // Expected output length: 25
-    ft_write(2, "Error message to stderr.\n", 25); // Write to stderr using ft_write directly
-    ft_write(1, "Writing to invalid fd.\n", 23); // Write to stderr using ft_write directly
+    run_write_test("Hello, world!\n", 14, strlen("Hello, world!\n"));
+    run_write_test("", 0, 0);
+    run_write_test("This is a longer test string.\n", 30, strlen("This is a longer test string.\n"));
+    run_write_test("Error message to stderr.\n", 25, strlen("Error message to stderr.\n"));
+    ft_write(2, "Error message to stderr.\n", 25);
+    ft_write(1, "Writing to invalid fd.\n", 23);
     int error = ft_write(-1, "error", 5);
     printf("Error value returned: %d\n", error);
-    ft_write(1, "Writing with bad size.\n", 23); // Write to stderr using ft_write directly
+    ft_write(1, "Writing with bad size.\n", 23);
     run_write_test("This is not the right size\n", -1, -1);
 
     printf("\n----/ft_read tests/----\n");
-
     FILE *f = fopen("testfile.txt", "w");
     if (f) {
         fprintf(f, "This is a test file for ft_read testing.\n");
@@ -205,14 +199,15 @@ int main(void) {
     test_read_zero_bytes();
     remove("testfile.txt");
     remove("empty.txt");
-    printf("\n=== Starting ft_strdup Tests ===\n\n");
-    test_strdup("");                     // empty string
-    test_strdup("hello");               // normal case
-    test_strdup("1234567890");          // numeric characters
-    test_strdup("!@#$%^&*()");          // special characters
-    test_strdup("The quick brown fox"); // sentence
-    test_strdup("A");                   // single character
-    test_strdup("Long string.................................................."); // 
+
+    printf("\n----/Starting ft_strdup Tests/----\n\n");
+    test_strdup("");
+    test_strdup("hello");
+    test_strdup("1234567890");
+    test_strdup("!@#$%^&*()");
+    test_strdup("The quick brown fox");
+    test_strdup("A");
+    test_strdup("Long string..................................................");
     
     return 0;
 }

@@ -18,7 +18,7 @@ ASM_SRC = 	src/ft_strlen.s \
 ASM_OBJ = $(ASM_SRC:.s=.o)
 
 CC = gcc
-C_FLAGS = -Wall -Wextra -Werror
+C_FLAGS = -Wall -Wextra -Werror -g3
 TEST_SRC = src/main.c
 TEST_INCLUDE = -I src/
 TEST_NAME = unit_tests

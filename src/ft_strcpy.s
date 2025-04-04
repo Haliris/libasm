@@ -13,5 +13,6 @@ cpy_loop:
     jmp cpy_loop
 
 done:
+    mov byte [rdi + rax], 0
     mov rax, rdi
     ret

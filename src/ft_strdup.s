@@ -6,7 +6,6 @@ extern ft_strlen
 section .text
 
 ft_strdup:
-    mov     rax, 0
     call    ft_strlen wrt ..plt
 
     inc     rax
@@ -14,7 +13,6 @@ ft_strdup:
     mov     rdi, rax
 
     call    malloc wrt ..plt
-
     test    rax, rax
     jz      error
 
@@ -24,5 +22,6 @@ ft_strdup:
     ret
 
 error:
-    mov rax, 0
+    pop rsi
+    xor rax, rax
     ret
