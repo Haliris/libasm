@@ -13,7 +13,8 @@ ASM_SRC = 	src/ft_strlen.s \
 			src/ft_strcmp.s \
 			src/ft_write.s \
 			src/ft_read.s \
-			src/ft_strdup.s
+			src/ft_strdup.s \
+			src/ft_atoi_base.s
 
 ASM_OBJ = $(ASM_SRC:.s=.o)
 

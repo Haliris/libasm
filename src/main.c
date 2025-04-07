@@ -5,6 +5,7 @@ extern int    ft_strcmp(const char* s1, const char* s2);
 extern int    ft_write(int fildes, const void* buff, size_t nbytes);
 extern int    ft_read(int fildes, const void* buff, size_t nbytes);
 extern char   *ft_strdup(const char* s);
+extern int    ft_atoi_base(char *str, char *base);
 
 
 void run_strcpy_test(const char *test_name, const char *src) {
@@ -134,6 +135,15 @@ void test_strdup(const char *input) {
     free(expected);
 }
 
+void test_atoi_base(char *input, char *base, int expected) {
+    int result = ft_atoi_base(input, base);
+    if (result == expected) {
+        printf("PASS: ft_atoi_base(\"%s\", \"%s\") == %d\n", input, base, expected);
+    } else {
+        printf("FAIL: ft_atoi_base(\"%s\", \"%s\") == %d, expected %d\n", input, base, result, expected);
+    }
+}
+
 int main(void) {
 
     printf("----/ft_strlen tests/----\n");
@@ -210,6 +220,30 @@ int main(void) {
     test_strdup("The quick brown fox");
     test_strdup("A");
     test_strdup("Long string..................................................");
-    
+
+    printf("\n----/atoi_base tests/----\n");
+    // Valid tests
+    test_atoi_base("1010", "01", 10);                    // binary
+    test_atoi_base("   +1A", "0123456789ABCDEF", 26);    // hex with whitespace and +
+    test_atoi_base("-1a", "0123456789abcdef", -26);      // lowercase hex
+    test_atoi_base("42", "0123456789", 42);              // decimal
+    test_atoi_base("   \t\n\r\f\v7F", "0123456789ABCDEF", 127); // hex with whitespaces
+
+    // Base validation test_atoi_bases
+    test_atoi_base("123", "1", 0);                       // invalid base: only one char
+    test_atoi_base("123", "1123456", 0);                 // invalid base: duplicate chars
+    test_atoi_base("123", "", 0);                        // empty base
+
+    // Invalid characters in string
+    test_atoi_base("ZZZ", "0123456789ABCDEF", 0);        // input has characters not in base
+    test_atoi_base("123!", "0123456789", 123);           // stops parsing at '!'
+    test_atoi_base("+abc", "abc", 0);                    // valid + sign
+
+    // Edge cases
+    test_atoi_base("", "0123456789", 0);                 // empty input
+    test_atoi_base("-", "0123456789", 0);                // only minus sign
+    test_atoi_base("000", "0123456789", 0);              // leading zeroes
+    test_atoi_base("   +0", "0123456789", 0);            // zero with whitespaces and sign
+    test_atoi_base("   -ff", "0123456789abcdef", -255);
     return 0;
 }

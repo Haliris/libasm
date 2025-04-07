@@ -5,19 +5,6 @@ section .data
 char_table:
     times 256 db 0
 
-    //whitespaces
-    mov byte [char_table + 9], 1
-    mov byte [char_table + 10], 1
-    mov byte [char_table + 11], 1
-    mov byte [char_table + 12], 1
-    mov byte [char_table + 13], 1
-    mov byte [char_table + 32], 1
-
-    //signs
-    mov byte [char_table + 43], 1
-    mov byte [char_table + 45], 1
-
-//Check base (rsi)
 ft_atoi_base:
     xor     rax, rax
     xor     r8, r8
@@ -26,9 +13,20 @@ ft_atoi_base:
     xor     r11, r11
     xor     r12, r12
     xor     r13, r13
-    mov     r11, rdi //string to convert
+    mov     r11, rdi
     mov     rdi, rsi
     mov     r12, 1
+
+    lea     rcx, [rel char_table]
+    mov byte [rcx + 9], 1
+    mov byte [rcx + 10], 1
+    mov byte [rcx + 11], 1
+    mov byte [rcx + 12], 1
+    mov byte [rcx + 13], 1
+    mov byte [rcx + 32], 1
+    mov byte [rcx + 43], 1
+    mov byte [rcx + 45], 1
+
     cmp     byte [rdi], 45
     je      set_neg_sign
     jmp     check_base
@@ -37,11 +35,11 @@ set_neg_sign:
     mov r12, -1
 
 check_base:
-    call    ft_strlen wrt ..plt// move rsi to top of the stack
+    call    ft_strlen wrt ..plt
     cmp     rax, 0
-    jz      done_error // is this correct instruction
+    jz      done_error
     cmp     rax, 1
-    jz      done_error // is this correct instruction
+    jz      done_error
     mov     r13, rax
     xor     rax, rax
     jmp     base_outer_loop
@@ -60,7 +58,7 @@ base_inner_loop:
     cmp     al, bl
     je      done_error
     movzx   r12, bl
-    mov     al, [char_table + rax]
+    mov     al, [rdx + rax]
     test    al, al
     jne     done_error
     inc     r9
@@ -81,8 +79,8 @@ check_value:
     jb      check_lowercase
     cmp     al, '9'
     ja      check_uppercase
-    movzx   eax, al
-    sub     eax, '0'
+    movzx   rcx, al
+    sub     rcx, '0'
     jmp     add_value
 
 
@@ -91,20 +89,20 @@ check_lowercase:
     jb      check_uppercase
     cmp     al, 'z'
     ja      check_uppercase
-    movzx   eax, al
-    sub     eax, 'a'
-    add     eax, 10
+    movzx   rcx, al
+    sub     rcx, 'a'
+    add     rcx, 10
     jmp     add_value
 
 check_uppercase:
-    movzx   eax, al
-    sub     eax, 'A'
-    add     eax, 10
+    movzx   rcx, al
+    sub     rcx, 'A'
+    add     rcx, 10
     jmp     add_value
 
 add_value:
     imul    rax, r13
-    add     rax, eax
+    add     rax, rcx
     inc     r10
     jmp     convert
 
