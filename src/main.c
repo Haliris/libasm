@@ -1,4 +1,10 @@
 #include "libasm.h"
+
+typedef struct list {
+    void        *data;
+    struct list *next;
+} t_list;
+
 extern size_t ft_strlen(const char* str);
 extern char   *ft_strcpy(char* dest, const char* src);
 extern int    ft_strcmp(const char* s1, const char* s2);
@@ -6,7 +12,7 @@ extern int    ft_write(int fildes, const void* buff, size_t nbytes);
 extern int    ft_read(int fildes, const void* buff, size_t nbytes);
 extern char   *ft_strdup(const char* s);
 extern int    ft_atoi_base(char *str, char *base);
-
+extern int    ft_list_size(t_list *list);
 
 void run_strcpy_test(const char *test_name, const char *src) {
     char dest[1000]; 
@@ -144,6 +150,15 @@ void test_atoi_base(char *input, char *base, int expected) {
     }
 }
 
+void test_list_size(t_list *head, size_t expected) {
+    size_t result = ft_list_size(head);
+    if (result == expected)
+        printf("PASS: expected %zu, got %zu\n", expected, result);
+    else
+        printf("FAIL: expected %zu, got %zu\n", expected, result);
+}
+
+
 int main(void) {
 
     printf("----/ft_strlen tests/----\n");
@@ -240,5 +255,34 @@ int main(void) {
     test_atoi_base("000", "0123456789", 0);
     test_atoi_base("   +0", "0123456789", 0);
     test_atoi_base("   -ff", "0123456789abcdef", -255);
+
+    printf("\n----/list_size tests/----\n");
+    // NULL list
+    test_list_size(NULL, 0);
+
+    // Single node
+    t_list node1 = { .data = NULL, .next = NULL };
+    test_list_size(&node1, 1);
+
+    // Two nodes
+    t_list node2 = { .data = NULL, .next = NULL };
+    node1.next = &node2;
+    test_list_size(&node1, 2);
+
+    // Three nodes
+    t_list node3 = { .data = NULL, .next = NULL };
+    node2.next = &node3;
+    test_list_size(&node1, 3);
+
+    // 10 nodes (dynamic allocation)
+    t_list *nodes = malloc(sizeof(t_list) * 10);
+    for (int i = 0; i < 9; ++i) {
+        nodes[i].data = NULL;
+        nodes[i].next = &nodes[i + 1];
+    }
+    nodes[9].data = NULL;
+    nodes[9].next = NULL;
+    test_list_size(&nodes[0], 10);
+
     return 0;
 }
