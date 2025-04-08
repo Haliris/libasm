@@ -11,6 +11,7 @@ ft_atoi_base:
     xor     r11, r11
     xor     r12, r12
     xor     r13, r13
+    xor     r14, r14
     mov     r11, rdi
     mov     rdi, rsi
 
@@ -61,18 +62,15 @@ next_i:
     inc r8
     jmp base_outer_loop
 
-//Skip all characters from char_table until char is different
-//Check for negative sign, move set_neg_sign down into this logic
-//Convert until character not in base is found, then break
-//increment r11 directly
-
 skip_charset:
+    mov     rax, 0
+    xor     r10, r10
     mov     al, [r11]
     test    al, al
-    je      ret
+    je      done
     movzx   rdx, al
     cmp     byte [rcx + rdx], 1
-    jmp     check_neg_sign
+    jne     check_neg_sign
     inc     r11
     cmp     al, 45
     jne     skip_charset
@@ -80,11 +78,10 @@ skip_charset:
     jmp     skip_charset
     
 check_neg_sign:
-    and r12, 1
-    jz  convert
-    jmp set_neg_sign
-    mov r12, 1
-    jmp convert
+    and     r12, 1
+    jne     set_neg_sign
+    mov     r12, 1
+    jmp     convert
 
 set_neg_sign:
     mov r12, -1
@@ -93,42 +90,32 @@ set_neg_sign:
 convert:
     cmp     byte [r11 + r10], 0
     je      done
-    jmp     check_value
+    jmp     check_in_base
 
-check_value:
+check_in_base:
+    xor     r9, r9
+    xor     rax, rax
     mov     al, [r11 + r10]
-    cmp     al, '0'
-    jb      check_lowercase
-    cmp     al, '9'
-    ja      check_uppercase
-    movzx   rcx, al
-    sub     rcx, '0'
-    jmp     add_value
+    jmp     check_in_base_loop
 
-check_lowercase:
-    cmp     al, 'a'
-    jb      check_uppercase
-    cmp     al, 'z'
-    ja      check_uppercase
-    movzx   rcx, al
-    sub     rcx, 'a'
-    add     rcx, 10
-    jmp     add_value
-
-check_uppercase:
-    movzx   rcx, al
-    sub     rcx, 'A'
-    add     rcx, 10
-    jmp     add_value
+check_in_base_loop:
+    cmp     byte [rdi + r9], 0
+    je      done
+    mov     bl, [rdi + r9]
+    cmp     al, bl
+    je      add_value
+    inc     r9
+    jmp     check_in_base_loop
 
 add_value:
-    imul    rax, r13
-    add     rax, rcx
+    imul    r14, r13
+    add     r14, r9
     inc     r10
     jmp     convert
 
 done:
-    imul rax, r12
+    imul    r14, r12
+    mov     rax, r14
     ret
 
 done_error:
