@@ -13,6 +13,8 @@ extern int    ft_read(int fildes, const void* buff, size_t nbytes);
 extern char   *ft_strdup(const char* s);
 extern int    ft_atoi_base(char *str, char *base);
 extern int    ft_list_size(t_list *list);
+extern void   ft_list_push_front(t_list **head, void *data);
+
 
 void run_strcpy_test(const char *test_name, const char *src) {
     char dest[1000]; 
@@ -158,6 +160,38 @@ void test_list_size(t_list *head, size_t expected) {
         printf("FAIL: expected %zu, got %zu\n", expected, result);
 }
 
+void print_list(t_list *head) {
+    printf("List: ");
+    while (head) {
+        printf("%s -> ", (char *)head->data);
+        head = head->next;
+    }
+    printf("NULL\n");
+}
+
+void test_list_push_front(void) {
+    t_list *head = NULL;
+
+    ft_list_push_front(&head, "World");
+    print_list(head);
+    ft_list_push_front(&head, "Hello");
+    print_list(head);
+
+    if (head && strcmp((char *)head->data, "Hello") == 0)
+        printf("PASS: Head is Hello\n");
+    else
+        printf("FAIL: Head is not Hello\n");
+
+    // Push another
+    ft_list_push_front(&head, "Start");
+    print_list(head);
+
+    // Edge case: pushing to an existing list
+    ft_list_push_front(&head, "");
+    print_list(head);
+
+}
+
 
 int main(void) {
 
@@ -257,24 +291,19 @@ int main(void) {
     test_atoi_base("   -ff", "0123456789abcdef", -255);
 
     printf("\n----/list_size tests/----\n");
-    // NULL list
     test_list_size(NULL, 0);
 
-    // Single node
     t_list node1 = { .data = NULL, .next = NULL };
     test_list_size(&node1, 1);
 
-    // Two nodes
     t_list node2 = { .data = NULL, .next = NULL };
     node1.next = &node2;
     test_list_size(&node1, 2);
 
-    // Three nodes
     t_list node3 = { .data = NULL, .next = NULL };
     node2.next = &node3;
     test_list_size(&node1, 3);
 
-    // 10 nodes (dynamic allocation)
     t_list *nodes = malloc(sizeof(t_list) * 10);
     for (int i = 0; i < 9; ++i) {
         nodes[i].data = NULL;
@@ -284,5 +313,7 @@ int main(void) {
     nodes[9].next = NULL;
     test_list_size(&nodes[0], 10);
 
+    printf("\n----/list_push_front tests/----\n");
+    test_list_push_front();
     return 0;
 }
