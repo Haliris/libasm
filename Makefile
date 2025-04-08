@@ -5,7 +5,7 @@
 ASM = nasm
 AR = ar
 RANLIB = ranlib
-ASM_FLAGS = -f elf64
+ASM_FLAGS = -g -f elf64
 NAME = libasm.a
 
 ASM_SRC = 	src/ft_strlen.s \

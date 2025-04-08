@@ -1,9 +1,7 @@
+section .text
 global ft_atoi_base
 extern ft_strlen
 
-section .data
-char_table:
-    times 256 db 0
 
 ft_atoi_base:
     xor     rax, rax
@@ -58,7 +56,7 @@ base_inner_loop:
     cmp     al, bl
     je      done_error
     movzx   r12, bl
-    mov     al, [rdx + rax]
+    mov     al, [rdi + r9]
     test    al, al
     jne     done_error
     inc     r9
@@ -69,12 +67,12 @@ next_i:
     jmp base_outer_loop
 
 convert:
-    cmp     byte [r9 + r10], 0
+    cmp     byte [r11 + r10], 0
     je      done
     jmp     check_value
 
 check_value:
-    mov     al, [r9 + 10]
+    mov     al, [r11 + r10]
     cmp     al, '0'
     jb      check_lowercase
     cmp     al, '9'
@@ -113,3 +111,8 @@ done:
 done_error:
     xor rax, rax
     ret
+
+section .data
+char_table:
+    times 256 db 0
+
