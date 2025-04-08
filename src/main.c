@@ -222,28 +222,23 @@ int main(void) {
     test_strdup("Long string..................................................");
 
     printf("\n----/atoi_base tests/----\n");
-    // Valid tests
-    test_atoi_base("1010", "01", 10);                    // binary
-    test_atoi_base("   +1A", "0123456789ABCDEF", 26);    // hex with whitespace and +
-    test_atoi_base("-1a", "0123456789abcdef", -26);      // lowercase hex
-    test_atoi_base("42", "0123456789", 42);              // decimal
-    test_atoi_base("   \t\n\r\f\v7F", "0123456789ABCDEF", 127); // hex with whitespaces
+    test_atoi_base("1010", "01", 10);
+    test_atoi_base("   +1A", "0123456789ABCDEF", 26);
+    test_atoi_base("-1a", "0123456789abcdef", -26);
+    test_atoi_base("42", "0123456789", 42);
+    test_atoi_base("   \t\n\r\f\v7F", "0123456789ABCDEF", 127);
 
-    // Base validation test_atoi_bases
-    test_atoi_base("123", "1", 0);                       // invalid base: only one char
-    test_atoi_base("123", "1123456", 0);                 // invalid base: duplicate chars
-    test_atoi_base("123", "", 0);                        // empty base
+    test_atoi_base("123", "1123456", 0);
+    test_atoi_base("123", "", 0);
 
-    // Invalid characters in string
-    test_atoi_base("ZZZ", "0123456789ABCDEF", 0);        // input has characters not in base
-    test_atoi_base("123!", "0123456789", 123);           // stops parsing at '!'
-    test_atoi_base("+abc", "abc", 5);                    // valid + sign
+    test_atoi_base("ZZZ", "0123456789ABCDEF", 0);
+    test_atoi_base("123!", "0123456789", 123);
+    test_atoi_base("+abc", "abc", 5);
 
-    // Edge cases
-    test_atoi_base("", "0123456789", 0);                 // empty input
-    test_atoi_base("-", "0123456789", 0);                // only minus sign
-    test_atoi_base("000", "0123456789", 0);              // leading zeroes
-    test_atoi_base("   +0", "0123456789", 0);            // zero with whitespaces and sign
+    test_atoi_base("", "0123456789", 0);
+    test_atoi_base("-", "0123456789", 0);
+    test_atoi_base("000", "0123456789", 0);
+    test_atoi_base("   +0", "0123456789", 0);
     test_atoi_base("   -ff", "0123456789abcdef", -255);
     return 0;
 }
