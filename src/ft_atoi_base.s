@@ -13,7 +13,6 @@ ft_atoi_base:
     xor     r13, r13
     mov     r11, rdi
     mov     rdi, rsi
-    mov     r12, 1
 
     lea     rcx, [rel char_table]
     mov byte [rcx + 9], 1
@@ -26,11 +25,8 @@ ft_atoi_base:
     mov byte [rcx + 45], 1
 
     cmp     byte [rdi], 45
-    je      set_neg_sign
     jmp     check_base
 
-set_neg_sign:
-    mov r12, -1
 
 check_base:
     call    ft_strlen wrt ..plt
@@ -45,10 +41,10 @@ check_base:
 base_outer_loop:
     mov     al, [rdi + r8]
     test    al, al
-    je      convert
+    je      skip_charset
     movzx   rdx, al
     cmp     byte [rcx + rdx], 1
-    je     done_error
+    je      done_error
     mov     r9, r8
     inc     r9
 
@@ -65,6 +61,35 @@ next_i:
     inc r8
     jmp base_outer_loop
 
+//Skip all characters from char_table until char is different
+//Check for negative sign, move set_neg_sign down into this logic
+//Convert until character not in base is found, then break
+//increment r11 directly
+
+skip_charset:
+    mov     al, [r11]
+    test    al, al
+    je      ret
+    movzx   rdx, al
+    cmp     byte [rcx + rdx], 1
+    jmp     check_neg_sign
+    inc     r11
+    cmp     al, 45
+    jne     skip_charset
+    inc     r12
+    jmp     skip_charset
+    
+check_neg_sign:
+    and r12, 1
+    jz  convert
+    jmp set_neg_sign
+    mov r12, 1
+    jmp convert
+
+set_neg_sign:
+    mov r12, -1
+    jmp convert
+
 convert:
     cmp     byte [r11 + r10], 0
     je      done
@@ -79,7 +104,6 @@ check_value:
     movzx   rcx, al
     sub     rcx, '0'
     jmp     add_value
-
 
 check_lowercase:
     cmp     al, 'a'
