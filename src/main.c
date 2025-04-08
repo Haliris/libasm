@@ -237,7 +237,7 @@ int main(void) {
     // Invalid characters in string
     test_atoi_base("ZZZ", "0123456789ABCDEF", 0);        // input has characters not in base
     test_atoi_base("123!", "0123456789", 123);           // stops parsing at '!'
-    test_atoi_base("+abc", "abc", 0);                    // valid + sign
+    test_atoi_base("+abc", "abc", 5);                    // valid + sign
 
     // Edge cases
     test_atoi_base("", "0123456789", 0);                 // empty input
