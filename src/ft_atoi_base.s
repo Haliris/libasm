@@ -46,6 +46,9 @@ base_outer_loop:
     mov     al, [rdi + r8]
     test    al, al
     je      convert
+    movzx   rdx, al
+    cmp     byte [rcx + rdx], 1
+    je     done_error
     mov     r9, r8
     inc     r9
 
@@ -55,10 +58,6 @@ base_inner_loop:
     je      next_i
     cmp     al, bl
     je      done_error
-    movzx   r12, bl
-    mov     al, [rdi + r9]
-    test    al, al
-    jne     done_error
     inc     r9
     jmp     base_inner_loop
 
