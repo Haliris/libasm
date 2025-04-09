@@ -204,10 +204,10 @@ int cmp_int(void *a, void *b) {
 int is_sorted(t_list *list, int (*cmp)()) {
     while (list && list->next) {
         if (cmp(list->data, list->next->data) > 0)
-            return 0;
+            return 1;
         list = list->next;
     }
-    return 1;
+    return 0;
 }
 
 t_list *create_list_from_array(int *arr, int size) {
