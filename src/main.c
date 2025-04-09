@@ -195,7 +195,10 @@ int cmp_int(void *a, void *b) {
     int int_a = *(int*)a; // Dereference pointers
     int int_b = *(int*)b;
     printf("Comparing %d and %d\n", int_a, int_b); // Debug print
-    return (*(int *)a - *(int *)b);
+    if (*(int *)a - *(int *)b > 0)
+        return 0;
+    else
+        return 1;
 }
 
 int is_sorted(t_list *list, int (*cmp)()) {

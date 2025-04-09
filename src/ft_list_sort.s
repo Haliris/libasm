@@ -7,6 +7,10 @@ struc Node
 endstruc
 section .rodata. 
     fmt db "Comparison returned: %d", 10, 0
+    swap_fmt db "Swapping values!", 10, 0
+    no_swap_fmt db "Not swapping values!", 10, 0
+
+
 section .text
 ft_list_sort:
     push    rbp
@@ -16,6 +20,7 @@ ft_list_sort:
     push    r14
     push    r15
     push    rbx
+
     test    rdi, rdi
     jz      done
     test    rsi, rsi
@@ -25,56 +30,68 @@ ft_list_sort:
     mov     rdi, [r13]
     test    rdi, rdi
     jz      done
-    mov     rax, [rdi + Node.next]
-    test    rax, rax
+    mov     rcx, [rdi + Node.next]
+    test    rcx, rcx
     jz      done
     call    ft_list_size
     test    rax, rax
     jz      done
     mov     r15, rax
     jmp     compare_outer_loop
+
 compare_outer_loop:
     test    r15, r15
     jz      done
     mov     r14, [r13]
     mov     rbx, r15
     dec     rbx
+
 compare_inner_loop:
     test    rbx, rbx
     jz      next_node
-    mov     rax, [r14 + Node.next]
-    test    rax, rax
+    mov     rcx, [r14 + Node.next]
+    test    rcx, rcx
     jz      next_node
     mov     rdi, [r14 + Node.data]
-    mov     rsi, [rax + Node.data]
+    mov     rsi, [rcx + Node.data]
+
+    push    rcx
     push    r14
     push    rbx
     push    r15
-    push    rax
     sub     rsp, 8
     call    r12
     add     rsp, 8
-    mov     rdi, rax        ; Store return value in rdi (for printf)
-    push    rax             ; Preserve rax (printf may clobber it)
-    mov     rsi, rax        ; Also pass it as argument (optional)
-    lea     rdi, [rel fmt]  ; Load format string address
-    xor     eax, eax        ; Clear AL (no floating-point args)
-    call    printf wrt ..plt         ; Print the return value
-    pop     rax             ; Restore rax
-    pop     rax
     pop     r15
     pop     rbx
     pop     r14
+    pop     rcx
     cmp     rax, 0
-    jg      do_swap
+    je      do_swap
     jmp     no_swap
+
 do_swap:
-    mov     rsi, [rax + Node.data]
+    push    r14
+    push    rbx
+    push    r15
+    push    rcx
+    sub     rsp, 8
+    lea     rdi, [rel swap_fmt]  ; Load swap message format string
+    xor     eax, eax             ; Clear AL (no floating-point args)
+    call    printf wrt ..plt     ; Print the swap message
+    add     rsp, 8
+    pop     rcx
+    pop     r15
+    pop     rbx
+    pop     r14
+
+    mov     rsi, [rcx + Node.data]
     mov     rdx, [r14 + Node.data]
     mov     [r14 + Node.data], rsi
-    mov     [rax + Node.data], rdx
+    mov     [rcx + Node.data], rdx
+    
 no_swap:
-    mov r14, [r14 + Node.next]
+    mov r14, rcx
     dec rbx
     jmp compare_inner_loop
 
