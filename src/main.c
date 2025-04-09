@@ -192,9 +192,7 @@ void print_list_int(t_list *head) {
 }
 
 int cmp_int(void *a, void *b) {
-    int int_a = *(int*)a; // Dereference pointers
-    int int_b = *(int*)b;
-    printf("Comparing %d and %d\n", int_a, int_b); // Debug print
+//    printf("Comparing %d and %d\n", int_a, int_b); // Debug print
     if (*(int *)a - *(int *)b > 0)
         return 0;
     else
@@ -203,11 +201,11 @@ int cmp_int(void *a, void *b) {
 
 int is_sorted(t_list *list, int (*cmp)()) {
     while (list && list->next) {
-        if (cmp(list->data, list->next->data) > 0)
-            return 1;
+        if (cmp(list->data, list->next->data) == 0)
+            return 0;
         list = list->next;
     }
-    return 0;
+    return 1;
 }
 
 t_list *create_list_from_array(int *arr, int size) {
