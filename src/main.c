@@ -192,6 +192,9 @@ void print_list_int(t_list *head) {
 }
 
 int cmp_int(void *a, void *b) {
+    int int_a = *(int*)a; // Dereference pointers
+    int int_b = *(int*)b;
+    printf("Comparing %d and %d\n", int_a, int_b); // Debug print
     return (*(int *)a - *(int *)b);
 }
 
