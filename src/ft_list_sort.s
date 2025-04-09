@@ -8,7 +8,9 @@ endstruc
 
 section .text
 ft_list_sort:
-    push    r12,
+    push    r12
+    push    rbx
+    push    rcx
     xor     rax, rax
     xor     r8, r8
     xor     r9, r9
@@ -19,7 +21,7 @@ ft_list_sort:
     jz      done
 
     mov     rbx, rdi
-    mov     rcx, [rbx + 8]
+    mov     rcx, [rbx + Node.next]
     test    rcx, rcx
     jz      done
     mov     r12, rsi
@@ -51,15 +53,11 @@ compare_outer_loop:
 compare_inner_loop:
     test    rcx, rcx
     jz      next_node
-    push    rbx
-    push    rcx
 
     mov     rdi, [rbx + Node.data]
     mov     rsi, [rcx + Node.data]
     call    r12
 
-    pop     rcx
-    pop     rbx
     cmp     rax, 0
     jg      swap_data
     mov     rcx, [rcx + Node.next]
@@ -82,6 +80,8 @@ next_node:
     jmp     compare_outer_loop
 
 done:
-    pop r12,
+    pop r12
+    pop rcx
+    pop rbx
     ret
 
