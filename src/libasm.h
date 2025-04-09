@@ -6,7 +6,6 @@
 # include <fcntl.h>
 # include <stdlib.h>
 # include <errno.h>
-# include <assert.h>
 
 
 //int ft_strlen(char* str);

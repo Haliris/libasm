@@ -8,80 +8,97 @@ endstruc
 
 section .text
 ft_list_sort:
+    push    rbp
+    mov     rbp, rsp
     push    r12
+    push    r13
+    push    r14
+    push    r15
     push    rbx
-    push    rcx
-    xor     rax, rax
-    xor     r8, r8
-    xor     r9, r9
 
     test    rdi, rdi
     jz      done
     test    rsi, rsi
     jz      done
 
-    mov     rbx, rdi
-    mov     rcx, [rbx + Node.next]
-    test    rcx, rcx
-    jz      done
+    mov     r13, rdi
     mov     r12, rsi
+    mov     rdi, [r13]
+    test    rdi, rdi
+    jz      done
 
-    mov     rdi, [rbx]
+    mov     rax, [rdi + Node.next]
+    test    rax, rax
+    jz      done
+
     call    ft_list_size
     test    rax, rax
     jz      done
-    mov     r8, rax
-    and     r8, 1
+    mov     r15, rax
+    and     r15, 1
     jne     uneven_size_inc
     shr     rax, 1
-    mov     r8, rax
-    xor     rax, rax
+    mov     r15, rax
     jmp     compare_outer_loop
 
 uneven_size_inc:
     inc     rax
     shr     rax, 1
-    mov     r8, rax
+    mov     r15, rax
     xor     rax, rax
     jmp     compare_outer_loop
 
 compare_outer_loop:
-    cmp     r9, r8
+    cmp     r15, r15
     je      done
+    mov     r14, [r13]
+    mov     rbx, r15
+    dec     rbx
     jmp     compare_inner_loop
 
 compare_inner_loop:
-    test    rcx, rcx
+    test    rbx, rbx
     jz      next_node
 
-    mov     rdi, [rbx + Node.data]
-    mov     rsi, [rcx + Node.data]
+    mov     rdi, [r14 + Node.data]
+    mov     rsi, [r14 + Node.next]
+    test    rsi, rsi
+    jz      next_node
+
+    push    r14
+    push    rbx
+    push    r15
+
     call    r12
 
+    pop     r15
+    pop     rbx
+    pop     r14
+
     cmp     rax, 0
-    jg      swap_data
-    mov     rcx, [rcx + Node.next]
+    jle     no_swap
+    mov     rsi, [r14 + Node.next]
+    mov     rax, [r14 + Node.data]
+    mov     rdx, [rsi + Node.data]
+    mov     [r14 + Node.data], rdx
+    mov     [rsi + Node.data], rax
     jmp     compare_inner_loop
 
-swap_data:
-    push    rdx
-    mov     rdx, [rbx + Node.data]
-    mov     rdi, [rcx + Node.data]
-    mov     [rbx + Node.data], rdi
-    mov     [rcx + Node.data], rdx
-    pop     rdx
-    mov     rcx, [rcx + Node.next]
-    jmp     compare_inner_loop
-
+no_swap:
+    mov r14, [r14 + Node.next]
+    dec rbx
+    jmp compare_inner_loop
+    
 next_node:
-    mov     rbx, [rbx + Node.next]
-    mov     rcx, [rbx + Node.next]
-    inc     r9
+    dec     r15
     jmp     compare_outer_loop
 
 done:
-    pop r12
-    pop rcx
     pop rbx
+    pop r15
+    pop r14
+    pop r13
+    pop r12
+    pop rbp
     ret
 

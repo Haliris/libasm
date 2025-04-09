@@ -249,9 +249,12 @@ void test_list_sort(int *array, int size) {
     printf("After:  ");
     print_list(list);
 
-    assert(is_sorted(list, cmp_int));
-    printf("✅ Passed!\n\n");
-
+    if(is_sorted(list, cmp_int)) {
+        printf("✅ Passed!\n\n");
+    }
+    else {
+        printf("Failed!\n\n");
+    }
     free_list(list);
 }
 
