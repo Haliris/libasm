@@ -35,26 +35,13 @@ ft_list_sort:
     test    rax, rax
     jz      done
     mov     r15, rax
-    and     r15, 1
-    jne     uneven_size_inc
-    shr     rax, 1
-    mov     r15, rax
-    jmp     compare_outer_loop
-
-uneven_size_inc:
-    inc     rax
-    shr     rax, 1
-    mov     r15, rax
-    xor     rax, rax
-    jmp     compare_outer_loop
 
 compare_outer_loop:
-    cmp     r15, r15
-    je      done
+    test    r15, r15
+    jz      done
     mov     r14, [r13]
     mov     rbx, r15
     dec     rbx
-    jmp     compare_inner_loop
 
 compare_inner_loop:
     test    rbx, rbx
@@ -82,7 +69,6 @@ compare_inner_loop:
     mov     rdx, [rsi + Node.data]
     mov     [r14 + Node.data], rdx
     mov     [rsi + Node.data], rax
-    jmp     compare_inner_loop
 
 no_swap:
     mov r14, [r14 + Node.next]

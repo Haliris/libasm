@@ -173,10 +173,19 @@ void test_list_size(t_list *head, size_t expected) {
         printf("FAIL: expected %zu, got %zu\n", expected, result);
 }
 
-void print_list(t_list *head) {
+void print_list_char(t_list *head) {
     printf("List: ");
     while (head) {
         printf("%s -> ", (char *)head->data);
+        head = head->next;
+    }
+    printf("NULL\n");
+}
+
+void print_list_int(t_list *head) {
+    printf("List: ");
+    while (head) {
+        printf("%d -> ", *(int *)head->data);
         head = head->next;
     }
     printf("NULL\n");
@@ -218,9 +227,9 @@ void test_list_push_front(void) {
     t_list *head = NULL;
 
     ft_list_push_front(&head, "World");
-    print_list(head);
+    print_list_char(head);
     ft_list_push_front(&head, "Hello");
-    print_list(head);
+    print_list_char(head);
 
     if (head && strcmp((char *)head->data, "Hello") == 0)
         printf("PASS: Head is Hello\n");
@@ -229,11 +238,11 @@ void test_list_push_front(void) {
 
     // Push another
     ft_list_push_front(&head, "Start");
-    print_list(head);
+    print_list_char(head);
 
     // Edge case: pushing to an existing list
     ft_list_push_front(&head, "");
-    print_list(head);
+    print_list_char(head);
 
 }
 
@@ -242,12 +251,12 @@ void test_list_sort(int *array, int size) {
 
     t_list *list = create_list_from_array(array, size);
     printf("Before: ");
-    print_list(list);
+    print_list_int(list);
 
     ft_list_sort(&list, cmp_int);
 
     printf("After:  ");
-    print_list(list);
+    print_list_int(list);
 
     if(is_sorted(list, cmp_int)) {
         printf("✅ Passed!\n\n");
