@@ -1,5 +1,17 @@
 #include "libasm.h"
 
+//set $node = (t_list *)$rdi
+//print *$node
+//
+//print *((t_list *)$rdi)
+//
+//set $n = (t_list *)$rdi
+//while ($n != 0)
+//  print $n->data
+//  set $n = $n->next
+//end
+
+
 typedef struct list {
     void        *data;
     struct list *next;

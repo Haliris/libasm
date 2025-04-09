@@ -8,8 +8,6 @@ endstruc
 
 section .text
 ft_list_sort:
-    push    rbx,
-    push    rcx,
     push    r12,
     xor     rax, rax
     xor     r8, r8
@@ -21,20 +19,31 @@ ft_list_sort:
     jz      done
 
     mov     rbx, rdi
+    mov     rcx, [rbx + 8]
+    test    rcx, rcx
+    jz      done
     mov     r12, rsi
 
     mov     rdi, [rbx]
     call    ft_list_size
     test    rax, rax
     jz      done
+    mov     r8, rax
+    and     r8, 1
+    jne     uneven_size_inc
+    shr     rax, 1
+    mov     r8, rax
+    xor     rax, rax
+    jmp     compare_outer_loop
 
+uneven_size_inc:
+    inc     rax
     shr     rax, 1
     mov     r8, rax
     xor     rax, rax
     jmp     compare_outer_loop
 
 compare_outer_loop:
-
     cmp     r9, r8
     je      done
     jmp     compare_inner_loop
@@ -42,19 +51,26 @@ compare_outer_loop:
 compare_inner_loop:
     test    rcx, rcx
     jz      next_node
+    push    rbx
+    push    rcx
+
     mov     rdi, [rbx + Node.data]
     mov     rsi, [rcx + Node.data]
     call    r12
+
+    pop     rcx
+    pop     rbx
     cmp     rax, 0
-    jg      swap_nodes
+    jg      swap_data
     mov     rcx, [rcx + Node.next]
     jmp     compare_inner_loop
 
-swap_nodes:
+swap_data:
     push    rdx
-    mov     rdx, rcx
-    mov     rcx, rbx
-    mov     rbx, rdx
+    mov     rdx, [rbx + Node.data]
+    mov     rdi, [rcx + Node.data]
+    mov     [rbx + Node.data], rdi
+    mov     [rcx + Node.data], rdx
     pop     rdx
     mov     rcx, [rcx + Node.next]
     jmp     compare_inner_loop
@@ -66,8 +82,6 @@ next_node:
     jmp     compare_outer_loop
 
 done:
-    pop rbx,
-    pop rcx,
     pop r12,
     ret
 
