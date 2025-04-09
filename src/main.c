@@ -14,6 +14,7 @@ extern char   *ft_strdup(const char* s);
 extern int    ft_atoi_base(char *str, char *base);
 extern int    ft_list_size(t_list *list);
 extern void   ft_list_push_front(t_list **head, void *data);
+extern void   ft_list_sort(t_list **begin_list, int (*cmp)());
 
 
 void run_strcpy_test(const char *test_name, const char *src) {
@@ -169,6 +170,38 @@ void print_list(t_list *head) {
     printf("NULL\n");
 }
 
+int cmp_int(void *a, void *b) {
+    return (*(int *)a - *(int *)b);
+}
+
+int is_sorted(t_list *list, int (*cmp)()) {
+    while (list && list->next) {
+        if (cmp(list->data, list->next->data) > 0)
+            return 0;
+        list = list->next;
+    }
+    return 1;
+}
+
+t_list *create_list_from_array(int *arr, int size) {
+    t_list *head = NULL;
+    for (int i = size - 1; i >= 0; --i) {
+        t_list *new_node = malloc(sizeof(t_list));
+        new_node->data = &arr[i];
+        new_node->next = head;
+        head = new_node;
+    }
+    return head;
+}
+
+void free_list(t_list *head) {
+    while (head) {
+        t_list *tmp = head;
+        head = head->next;
+        free(tmp);
+    }
+}
+
 void test_list_push_front(void) {
     t_list *head = NULL;
 
@@ -192,6 +225,23 @@ void test_list_push_front(void) {
 
 }
 
+void test_list_sort(int *array, int size) {
+    printf("Test: sorting list of %d elements\n", size);
+
+    t_list *list = create_list_from_array(array, size);
+    printf("Before: ");
+    print_list(list);
+
+    ft_list_sort(&list, cmp_int);
+
+    printf("After:  ");
+    print_list(list);
+
+    assert(is_sorted(list, cmp_int));
+    printf("✅ Passed!\n\n");
+
+    free_list(list);
+}
 
 int main(void) {
 
@@ -248,10 +298,10 @@ int main(void) {
     printf("Errno value: %d (%s)\n", errno, strerror(errno));
 
     printf("\n----/ft_read tests/----\n");
-    FILE *f = fopen("testfile.txt", "w");
-    if (f) {
-        fprintf(f, "This is a test file for ft_read testing.\n");
-        fclose(f);
+    FILE *file = fopen("testfile.txt", "w");
+    if (file) {
+        fprintf(file, "This is a test file for ft_read testing.\n");
+        fclose(file);
     }
     test_read_success();
     test_read_empty();
@@ -315,5 +365,25 @@ int main(void) {
 
     printf("\n----/list_push_front tests/----\n");
     test_list_push_front();
+    
+    printf("\n----/list_sort tests/----\n");
+    int a[] = {5, 3, 8, 1, 2};
+    test_list_sort(a, 5);
+
+    int b[] = {1, 2, 3, 4, 5}; // already sorted
+    test_list_sort(b, 5);
+
+    int c[] = {5, 4, 3, 2, 1}; // reverse order
+    test_list_sort(c, 5);
+
+    int d[] = {42}; // single element
+    test_list_sort(d, 1);
+
+    int e[] = {}; // empty list
+    test_list_sort(e, 0);
+
+    int f[] = {7, 7, 7, 7}; // duplicates
+    test_list_sort(f, 4);
+
     return 0;
 }
