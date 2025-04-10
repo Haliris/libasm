@@ -1,15 +1,11 @@
 global ft_list_sort
 extern ft_list_size
 extern printf
+
 struc Node
     .data resq 1
     .next resq 1
 endstruc
-section .rodata. 
-    fmt db "Comparison returned: %d", 10, 0
-    swap_fmt db "Swapping values!", 10, 0
-    no_swap_fmt db "Not swapping values!", 10, 0
-
 
 section .text
 ft_list_sort:
@@ -71,20 +67,6 @@ compare_inner_loop:
     jmp     no_swap
 
 do_swap:
-    push    r14
-    push    rbx
-    push    r15
-    push    rcx
-    sub     rsp, 8
-    lea     rdi, [rel swap_fmt]  ; Load swap message format string
-    xor     eax, eax             ; Clear AL (no floating-point args)
-    call    printf wrt ..plt     ; Print the swap message
-    add     rsp, 8
-    pop     rcx
-    pop     r15
-    pop     rbx
-    pop     r14
-
     mov     rsi, [rcx + Node.data]
     mov     rdx, [r14 + Node.data]
     mov     [r14 + Node.data], rsi
