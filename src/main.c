@@ -27,7 +27,7 @@ extern int    ft_atoi_base(char *str, char *base);
 extern int    ft_list_size(t_list *list);
 extern void   ft_list_push_front(t_list **head, void *data);
 extern void   ft_list_sort(t_list **begin_list, int (*cmp)());
-
+extern void   ft_list_remove_if(t_list **begin, void *data_ref, int (*cmp)(), void (*free_fct)(void *));
 
 void run_strcpy_test(const char *test_name, const char *src) {
     char dest[1000]; 
@@ -271,6 +271,60 @@ void test_list_sort(int *array, int size) {
     free_list(list);
 }
 
+void dummy_free(void *data) {
+    (void)data;
+    // nothing needed here, since data points to stack ints
+    return;
+}
+
+int is_equal_int(void *a, void *b) {
+    return (*(int *)a != *(int *)b);
+}
+
+void test_list_remove_if(void) {
+    printf("\n----/list_remove_if tests/----\n");
+
+    int a1[] = {1, 2, 3, 4, 5};
+    t_list *list1 = create_list_from_array(a1, 5);
+    int ref1 = 3;
+    ft_list_remove_if(&list1, &ref1, is_equal_int, dummy_free);
+    printf("Remove 3 from [1 2 3 4 5]: ");
+    print_list_int(list1);
+    free_list(list1);
+
+    int a2[] = {1, 1, 1, 1};
+    t_list *list2 = create_list_from_array(a2, 4);
+    int ref2 = 1;
+    ft_list_remove_if(&list2, &ref2, is_equal_int, dummy_free);
+    printf("Remove all 1s from [1 1 1 1]: ");
+    print_list_int(list2);
+    free_list(list2);
+
+    int a3[] = {1, 2, 3, 4};
+    t_list *list3 = create_list_from_array(a3, 4);
+    int ref3 = 99;
+    ft_list_remove_if(&list3, &ref3, is_equal_int, dummy_free);
+    printf("Remove 99 (not present) from [1 2 3 4]: ");
+    print_list_int(list3);
+    free_list(list3);
+
+    int a4[] = {};
+    t_list *list4 = create_list_from_array(a4, 0);
+    int ref4 = 1;
+    ft_list_remove_if(&list4, &ref4, is_equal_int, dummy_free);
+    printf("Remove 1 from empty list: ");
+    print_list_int(list4);
+    free_list(list4);
+
+    int a5[] = {2};
+    t_list *list5 = create_list_from_array(a5, 1);
+    int ref5 = 2;
+    ft_list_remove_if(&list5, &ref5, is_equal_int, dummy_free);
+    printf("Remove 2 from single-element [2]: ");
+    print_list_int(list5);
+    free_list(list5);
+}
+
 int main(void) {
 
     printf("----/ft_strlen tests/----\n");
@@ -412,6 +466,8 @@ int main(void) {
 
     int f[] = {7, 7, 7, 7}; // duplicates
     test_list_sort(f, 4);
+
+    test_list_remove_if();
 
     return 0;
 }

@@ -28,7 +28,7 @@ list_loop:
     push    r10
     sub     rsp, 8
 
-    mov     rdi, r9 
+    mov     rdi, [r9]
     call    rdx
 
     add     rsp, 8
