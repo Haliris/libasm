@@ -1,7 +1,6 @@
 # Syscall table:  https://blog.rchapman.org/posts/Linux_System_Call_Table_for_x86_64/
 # instructions cheatsheet: https://cs.brown.edu/courses/cs033/docs/guides/x64_cheatsheet.pdf
 
-
 ASM = nasm
 AR = ar
 RANLIB = ranlib
