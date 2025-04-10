@@ -16,7 +16,7 @@ void run_strcpy_test(const char *test_name, const char *src) {
     char *result = ft_strcpy(dest, src);
 
     printf("[%s] src: \"%s\" | dest: \"%s\" | returned: %s\n",
-           test_name, src, dest, (result == dest) ? "PASS" : "FAIL");
+           test_name, src, dest, (result == dest) ? "PASS ✅" : "FAIL");
 }
 
 void run_strcmp_test(const char *s1, const char *s2) {
@@ -37,16 +37,16 @@ void run_strcmp_test(const char *s1, const char *s2) {
     else if (result_asm && result_c == 0)
         printf("FAILED");
     else
-        printf("PASSED");
+        printf("PASSED ✅");
     printf("!\n\n");
 }
 
 void run_write_test(const char *test_str, int expected_bytes, size_t length) {
     int bytes_written = ft_write(1, test_str, length);
     if (bytes_written != expected_bytes) {
-        printf("Test failed: expected %d bytes, got %d bytes.\n", expected_bytes, bytes_written);
+        printf("FAILED: expected %d bytes, got %d bytes.\n", expected_bytes, bytes_written);
     } else {
-        printf("Test passed: wrote %d bytes successfully.\n", bytes_written);
+        printf("PASSED ✅: wrote %d bytes successfully.\n", bytes_written);
     }
 }
 
@@ -129,7 +129,7 @@ void test_strdup(const char *input) {
     if (strcmp(result, expected) != 0) {
         printf("FAIL: Expected \"%s\", got \"%s\"\n", expected, result);
     } else {
-        printf("PASS: \"%s\" duplicated successfully.\n", input);
+        printf("PASS ✅: \"%s\" duplicated successfully.\n", input);
     }
     free(result);
     free(expected);
@@ -138,7 +138,7 @@ void test_strdup(const char *input) {
 void test_atoi_base(char *input, char *base, int expected) {
     int result = ft_atoi_base(input, base);
     if (result == expected) {
-        printf("PASS: ft_atoi_base(\"%s\", \"%s\") == %d\n", input, base, expected);
+        printf("PASS ✅: ft_atoi_base(\"%s\", \"%s\") == %d\n", input, base, expected);
     } else {
         printf("FAIL: ft_atoi_base(\"%s\", \"%s\") == %d, expected %d\n", input, base, result, expected);
     }

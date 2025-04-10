@@ -56,11 +56,13 @@ unit_tests_bonus:
 
 clean:
 	rm -rf $(ASM_OBJ)
+	rm -rf $(ASM_OBJ_BONUS)
 
 fclean: clean
 	rm -rf $(NAME)
 	rm -rf $(TEST_NAME)
+	rm -rf $(TEST_NAME_BONUS)
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re bonus unit_tests unit_tests_bonus 

@@ -13,7 +13,7 @@ extern void   ft_list_remove_if(t_list **begin, void *data_ref, int (*cmp)(), vo
 void test_list_size(t_list *head, size_t expected) {
     size_t result = ft_list_size(head);
     if (result == expected)
-        printf("PASS: expected %zu, got %zu\n", expected, result);
+        printf("PASS ✅: expected %zu, got %zu\n", expected, result);
     else
         printf("FAIL: expected %zu, got %zu\n", expected, result);
 }
@@ -37,7 +37,6 @@ void print_list_int(t_list *head) {
 }
 
 int cmp_int(void *a, void *b) {
-//    printf("Comparing %d and %d\n", int_a, int_b); // Debug print
     if (*(int *)a - *(int *)b > 0)
         return 0;
     else
@@ -77,27 +76,36 @@ void test_list_push_front(void) {
 
     ft_list_push_front(&head, "World");
     print_list_char(head);
+    if (head && strcmp((char *)head->data, "World") == 0)
+        printf("✅ Passed: Head is World\n");
+    else
+        printf("FAIL: Head is not World\n");
+
     ft_list_push_front(&head, "Hello");
     print_list_char(head);
-
     if (head && strcmp((char *)head->data, "Hello") == 0)
-        printf("PASS: Head is Hello\n");
+        printf("✅ Passed: Head is Hello\n");
     else
         printf("FAIL: Head is not Hello\n");
 
-    // Push another
     ft_list_push_front(&head, "Start");
     print_list_char(head);
+    if (head && strcmp((char *)head->data, "Start") == 0)
+        printf("✅ Passed: Head is Start\n");
+    else
+        printf("FAIL: Head is not Start\n");
 
-    // Edge case: pushing to an existing list
     ft_list_push_front(&head, "");
     print_list_char(head);
+    if (head && strcmp((char *)head->data, "") == 0)
+        printf("✅ Passed: Head is empty string\n");
+    else
+        printf("FAIL: Head is not empty string\n");
 
 }
 
 void test_list_sort(int *array, int size) {
     printf("Test: sorting list of %d elements\n", size);
-
     t_list *list = create_list_from_array(array, size);
     printf("Before: ");
     print_list_int(list);
@@ -127,7 +135,6 @@ int is_equal_int(void *a, void *b) {
 }
 
 void test_list_remove_if(void) {
-    printf("\n----/list_remove_if tests/----\n");
 
     int a1[] = {1, 2, 3, 4, 5};
     t_list *list1 = create_list_from_array(a1, 5);
@@ -216,6 +223,7 @@ int main(void) {
     int f[] = {7, 7, 7, 7}; // duplicates
     test_list_sort(f, 4);
 
+    printf("\n----/list_remove_if tests/----\n");
     test_list_remove_if();
     return 0;
 }

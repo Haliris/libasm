@@ -4,5 +4,6 @@
 *.obj
 *.bc
 unit_tests
+unit_tests_bonus
 *.a
 test
