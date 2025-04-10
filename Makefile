@@ -41,7 +41,7 @@ unit_tests:
 	$(CC) $(C_FLAGS) $(TEST_SRC) $(NAME) $(TEST_INCLUDE) -o $(TEST_NAME)
 
 clean:
-	rm -rf $(ASM_OBJ) $(NAME)
+	rm -rf $(ASM_OBJ)
 
 fclean: clean
 	rm -rf $(NAME)
