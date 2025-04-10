@@ -278,7 +278,7 @@ void dummy_free(void *data) {
 }
 
 int is_equal_int(void *a, void *b) {
-    return (*(int *)a != *(int *)b);
+    return (*(int *)a == *(int *)b);
 }
 
 void test_list_remove_if(void) {

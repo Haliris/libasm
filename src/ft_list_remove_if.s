@@ -1,101 +1,102 @@
 global ft_list_remove_if
 extern free
+
 struc Node
     .data resq 1
     .next resq 1
 endstruc
+
 section .text
 ft_list_remove_if:
-    test    rsi, rsi        ; Check if data_ref is NULL
+    test    rsi, rsi
     jz      done
-    test    rdx, rdx        ; Check if cmp function is NULL
+    test    rdx, rdx
     jz      done
-    test    rcx, rcx        ; Check if free_fct is NULL
+    test    rcx, rcx
     jz      done
-    
-    ; Save callee-saved registers
+
     push    r12
     push    r13
     push    r14
     push    r15
     
-    mov     r12, rcx        ; Store free_fct in r12
-    mov     r13, rdx        ; Store cmp function in r13
-    mov     r14, rsi        ; Store data_ref in r14
-    mov     r15, rdi        ; Store list head pointer in r15
+    mov     r12, rcx        ; free_fct
+    mov     r13, rdx        ; cmp function
+    mov     r14, rsi        ; data_ref
+    mov     r15, rdi        ; list head pointer
     
-    xor     r10, r10        ; Initialize prev pointer to NULL
-    mov     rdi, [r15]      ; Load the head node pointer
+    xor     r10, r10        ; prev pointer
+    mov     rdi, [r15]      ; head node pointer
     
-    test    rdi, rdi        ; Check if the list is empty
+    test    rdi, rdi
     jz      cleanup
     
-    mov     r8, [rdi + Node.next]  ; Get next node
+    mov     r8, [rdi + Node.next]  ; next node
     
 list_loop:
-    test    rdi, rdi        ; Check if current node is NULL
+    test    rdi, rdi
     jz      cleanup
     
-    mov     r9, [rdi + Node.data]  ; Get data pointer from current node
+    mov     r9, [rdi + Node.data]
     
-    push    rdi             ; Save current node
-    push    r8              ; Save next node
-    push    r10             ; Save prev node
+    push    rdi
+    push    r8
+    push    r10
+    sub     rsp, 8
     
-    mov     rdi, r9         ; Pass data pointer as first arg
-    mov     rsi, r14        ; Pass data_ref as second arg 
-    call    r13             ; Call cmp function
+    mov     rdi, r9
+    mov     rsi, r14
+    call    r13
     
-    pop     r10             ; Restore prev node
-    pop     r8              ; Restore next node
-    pop     rdi             ; Restore current node
+    add     rsp, 8
+    pop     r10
+    pop     r8
+    pop     rdi
     
-    test    rax, rax        ; Check comparison result
-    je      continue_loop   ; If not equal (0), continue
+    cmp     rax, 0
+    je      continue_loop
     
-    ; Node needs to be removed
-    push    rdi             ; Save node to be freed
-    push    r8              ; Save next node
-    push    r10             ; Save prev node
-    push    r14             ; Save data_ref
+    push    rdi
+    push    r8
+    push    r10
+    push    r14
     
-    mov     rdi, [rdi + Node.data] ; Get data pointer to free
-    call    r12             ; Call free_fct on data
+    mov     rdi, [rdi + Node.data]
+    call    r12
     
-    pop     r14             ; Restore data_ref
-    pop     r10             ; Restore prev node
-    pop     r8              ; Restore next node
-    pop     rdi             ; Restore node to be freed
+    pop     r14
+    pop     r10
+    pop     r8
+    pop     rdi
     
-    ; Relink nodes
-    test    r10, r10        ; Check if we're removing the head
+    test    r10, r10
     jz      update_head
     
-    mov     [r10 + Node.next], r8  ; Link prev->next to next
+    mov     [r10 + Node.next], r8
     jmp     free_node
     
 update_head:
-    mov     [r15], r8       ; Update head pointer
+    mov     [r15], r8
     
 free_node:
-    push    r8              ; Save next node
-    push    r10             ; Save prev node
-    call    free wrt ..plt  ; Free the current node
-    pop     r10             ; Restore prev node
-    pop     r8              ; Restore next node
+    push    r8
+    push    r10
+    call    free wrt ..plt
+    pop     r10
+    pop     r8
     
-    mov     rdi, r8         ; Move to next node
-    test    r8, r8          ; Check if next is NULL
+    mov     rdi, r8
+    test    r8, r8
     jz      cleanup
-    mov     r8, [r8 + Node.next]  ; Update next->next
+    mov     r8, [r8 + Node.next]
     jmp     list_loop
     
 continue_loop:
-    mov     r10, rdi        ; Update prev to current
-    mov     rdi, r8         ; Move to next node
-    test    r8, r8          ; Check if next is NULL
+    mov     r10, rdi
+    mov     rdi, r8
+    test    r8, r8
     jz      cleanup
-    mov     r8, [r8 + Node.next]  ; Update next->next
+    mov     r8, [r8 + Node.next]
     jmp     list_loop
     
 cleanup:
