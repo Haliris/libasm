@@ -8,18 +8,21 @@ section .text
 
 ft_strdup:
     call    ft_strlen wrt ..plt
-
     inc     rax
-    push    rdi
-    mov     rdi, rax
 
+    push    rdi
+    sub     rsp, 8
+
+    mov     rdi, rax
     call    malloc wrt ..plt
     test    rax, rax
     jz      error
-
+    add     rsp, 8
     pop     rsi
+
     mov     rdi, rax
     call    ft_strcpy wrt ..plt
+
     ret
 
 error:

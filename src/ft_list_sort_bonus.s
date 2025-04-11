@@ -1,6 +1,5 @@
 global ft_list_sort
 extern ft_list_size
-extern printf
 
 struc Node
     .data resq 1
