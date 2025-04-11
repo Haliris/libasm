@@ -56,7 +56,8 @@ t_list *create_list_from_array(int *arr, int size) {
     t_list *head = NULL;
     for (int i = size - 1; i >= 0; --i) {
         t_list *new_node = malloc(sizeof(t_list));
-        new_node->data = &arr[i];
+        new_node->data = malloc(sizeof(int));
+        *(int*)(new_node->data) = arr[i];
         new_node->next = head;
         head = new_node;
     }
@@ -67,6 +68,7 @@ void free_list(t_list *head) {
     while (head) {
         t_list *tmp = head;
         head = head->next;
+        free(tmp->data);
         free(tmp);
     }
 }
@@ -101,7 +103,11 @@ void test_list_push_front(void) {
         printf("✅ Passed: Head is empty string\n");
     else
         printf("FAIL: Head is not empty string\n");
-
+    while (head) {
+        void *tmp = head;
+        head = head->next;
+        free(tmp);
+    }
 }
 
 void test_list_sort(int *array, int size) {
@@ -125,8 +131,7 @@ void test_list_sort(int *array, int size) {
 }
 
 void dummy_free(void *data) {
-    (void)data;
-    // nothing needed here, since data points to stack ints
+    free(data);
     return;
 }
 
@@ -225,5 +230,6 @@ int main(void) {
 
     printf("\n----/list_remove_if tests/----\n");
     test_list_remove_if();
+    free(nodes);
     return 0;
 }
